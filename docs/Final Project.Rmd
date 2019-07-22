@@ -1,0 +1,131 @@
+---
+title: "Global Warming in the Oceans & Sea Level Trends"
+author: "Caitlyn Weston"
+date: "7/19/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Background
+
+It has become increasingly aware over the past few years that global warming is a true phenomenon and a serious issue our world faces. Due to various factors, such as pollution, fossil fuels, etc., the oceans and land on Earth are heating up at a faster pace than normal.  The changes in temperature are not too noticeable by us, but the 'side effects' and the long term effects are clear to see in our everyday lives. 
+
+## Question
+
+What is the temperature trend globally in oceans? How much have sea levels risen over the years?
+
+In this project I will:
+
+1. Load data & packages that are required
+2. Reformat and process the data
+3. Visualize data into a scatter plot and a map
+4. Analyze the data
+5. Draw conclusions based on the data and provide prevention strategies to global warming
+
+## Packages Required
+
+```{r}
+
+library(dplyr)
+library(ggplot2)
+```
+
+
+## Importing Data
+In order to analyze data we need to read in our data! Two datasets were imported and read as csv's. They were also renamed. 
+
+```{r}
+
+global.ocean.anomalies = read.csv("https://www.ncdc.noaa.gov/cag/global/time-series/globe/ocean/ytd/12/1880-2017.csv")
+
+sea.levels = read.csv("https://datahub.io/core/sea-level-rise/r/epa-sea-level.csv")
+```
+
+
+## Previewing Data
+In order to see the data that was just read in and start to understand the parameters given, we can use the head() function to see what columns there are. This function will display the first 6 rows of data. 
+
+```{r}
+head(global.ocean.anomalies)                     
+head(sea.levels)
+```
+
+## Visualizing Data
+In this section we will create scatter plots using both data sets to visualize temperature and sea level trends.
+
+# Global Ocean Temp Visualization
+First we will convert the global ocean data into a data frame so it is easier to read and plot. 
+
+```{r}
+global.ocean.anomalies.df = data.frame(global.ocean.anomalies)
+head(global.ocean.anomalies.df)
+```
+
+Next, we will delete the first three rows as they are not information that is needed. To do this, we will use the [-c(),] function.
+
+```{r}
+global.ocean.anomalies.edited = global.ocean.anomalies.df[-c(1, 2, 3, 4),]
+head(global.ocean.anomalies.edited)
+```
+
+Since the Temperature Change column is named 'Value', we will change that to 'Avg_Temp_Change'.
+
+```{r}
+colnames(global.ocean.anomalies.edited) = c('Year' , 'Avg_Temp_Change')
+head(global.ocean.anomalies.edited)
+```
+
+Not it is time to make the scatter plot! In this step, geom_point() is used to create a scatter plot layer. At frist, the tick marks of the graph are very busy and diorganized, so we then use scale_x_discrete(breaks = c()) to determine which tick marks should be displayed on both axis.
+
+```{r}
+library(ggplot2)
+ggplot(data = global.ocean.anomalies.edited, mapping = aes(x = Year , y = Avg_Temp_Change)) + 
+  geom_point(color = "hot pink") + scale_x_discrete(breaks = c("1880", "1930", "1970", "2017")) + 
+  scale_y_discrete(breaks = c("-0.50", "0.00", "0.25", "0.75")) + 
+  geom_smooth(method=lm, se=FALSE) + 
+  labs(x = "Year", y = "Average Temperature Change [Celsius]", title = "Global Ocean Temperature Anomalies Over Time") 
+```
+
+# Analysis of Plot
+From the plot above, it can be seen that the average global ocean temperature increases over time. It can even be stated that the rate at which the temperature increases is faster in more recent years. You can see this by observing the slope. Another conclusion you can draw from this plot is that currently the oceans' temperature has increased by 0.75 degress Celsius since 1970. That's about 33 degrees Farenheit.     
+
+# Sea Level Visualization
+Now, we will use the sea level data to observe how much sea levels have risen over time.
+
+First, we will review again our dataset.
+
+```{r}
+sea.levels = read.csv("https://datahub.io/core/sea-level-rise/r/epa-sea-level.csv")
+head(sea.levels)
+```
+
+Luckily the data seems organized well and good to go, so we can plot right away!
+
+```{r}
+ggplot(data = sea.levels, mapping = aes(x = Year , y = CSIRO.Adjusted.Sea.Level)) + 
+  geom_point(color = "blue") + 
+  geom_smooth(method = lm, se = FALSE) + 
+  scale_x_discrete(breaks = c("1880-03-15", "1924-03-15", "1968-03-15", "2014-03-15")) + 
+  labs(x = "Date", y = "Sea Level [inches]", title = "Sea Level Changes Over Time") 
+```
+
+# Analysis of Plot
+Based on the scatter plot above, it can clearly be seen that sea level globally has signifcantly increased. Currently, sea levels have risen an average total of about 10 inches.  Although a short measurement, this can have drastic effects on marine ecosystems. What's also interesting is that similar to the global ocean temperature graph, the sea level starts to increase at a faster rate in more recent years. This could possibly be a correlation to increases in pollution and CO2 production. 
+
+## Conclusions
+
+Overall, the data and visuals show both an increase in temperature in the ocean and a rise in sea levels.  Research shows that the ocean absorbs most of the excess heat from greenhouse gas emissions, leading to rising ocean temperatures.These increasing ocean temperatures affect marine species and ecosystems. Rising temperatures and increases in sea level can thus cause coral bleaching and the loss of breeding grounds for marine fishes and mammals. Rising ocean temperatures also affect the benefits humans derive from the ocean – threatening food security, increasing the prevalence of diseases and causing more extreme weather events and the loss of coastal protection.
+
+According to the IUCN, "achieving the mitigation targets set by the Paris Agreement on climate change and limiting the global average temperature increase to well below 2°C above pre-industrial levels is crucial to prevent the massive, irreversible impacts of ocean warming on marine ecosystems and their services". The current goal in the ocean is to establish marine protected areas, such as precautionary catch limits to prevent overfishing, in order to protect ocean ecosystems and shield humans from the effects of ocean warming.
+
+What we can do ourselves is become more educated on global warming and find small ways to change our habits.  We can recyle, compost, eat less meat, use less plastic and water, walk instead of drive, etc.  There are so many ways to contribute to a healthier earth and if we all come together we might just be able to fix global warming!
+
+## References
+
+<https://www.iucn.org/resources/issues-briefs/ocean-warming#why>
+
+<https://datahub.io/core/sea-level-rise#resource-epa-sea-level>
+
